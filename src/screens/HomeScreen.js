@@ -1,6 +1,6 @@
 import { View, Text, Image, SafeAreaView, ScrollView } from "react-native";
 import React, { useState } from "react";
-import Features from "./../components/Features";
+import Features from "../components/Features";
 import { dummyMessages } from "../utils";
 import {
   widthPercentageToDP as wp,
