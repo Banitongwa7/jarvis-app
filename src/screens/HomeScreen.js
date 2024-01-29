@@ -16,6 +16,7 @@ export default function HomeScreen() {
           <Image
             source={require("./../../assets/images/bot.png")}
             style={{ width: wp(15), height: hp(15) }}
+            resizeMode="contain"
           />
         </View>
 
@@ -44,7 +45,8 @@ export default function HomeScreen() {
                           <Image
                             source={{ uri: item.content }}
                             className="rounded-2xl"
-                            style={{ width: wp(60), height: hp(60) }}
+                            style={{ width: wp(60), height: hp(30) }}
+                            resizeMode="contain"
                           />
                         </View>
                       </View>
