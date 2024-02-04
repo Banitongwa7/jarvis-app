@@ -5,18 +5,130 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Features from "../components/Features";
 import { dummyMessages } from "../utils";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import Voice from "@react-native-voice/voice";
+import { apiCall } from "../api/openAI";
+import Tts from "react-native-tts";
 
 export default function HomeScreen() {
-  const [msg, setMsg] = useState(dummyMessages);
+  const [msg, setMsg] = useState([]);
   const [recording, setRecording] = useState(true);
+  const [result, setResult] = useState("");
+  const ScrollViewRef = useRef();
+  const [loading, setLoading] = useState(false);
+
+  const speechStartHandler = (e) => {
+    console.log("speechStartHandler");
+  };
+
+  const speechEndHandler = (e) => {
+    setRecording(false);
+    console.log("speechEndHandler");
+  };
+
+  const speechErrorHandler = (e) => {
+    console.log("speechErrorHandler");
+  };
+
+  const speechResultsHandler = (e) => {
+    console.log("speechResultsHandler");
+    const text = e.value[0];
+    setResult(text);
+  };
+
+  const startRecording = async () => {
+    try {
+      Tts.stop();
+      await Voice.start("en-US");
+      setRecording(true);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const stopRecording = async () => {
+    try {
+      await Voice.stop();
+      setRecording(false);
+      fetchResponse();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const fetchResponse = () => {
+    if (result.trim().length > 0) {
+      let newMessages = [...msg];
+      newMessages.push({ role: "user", content: result.trim() });
+      setMsg([...newMessages]);
+      updateScrollView();
+      setLoading(true);
+      apiCall(result.trim(), newMessages).then((res) => {
+        setLoading(false);
+        if (res.success) {
+          setMsg([...res.data]);
+          updateScrollView();
+          setResult("");
+          startTextToSpeech(res.data[res.data.length - 1]);
+        } else {
+          Alert.alert("Error", res.msg);
+        }
+      });
+    }
+  };
+
+  const updateScrollView = () => {
+    setTimeout(() => {
+      ScrollViewRef?.current?.scrollToEnd({ animated: true });
+    }, 200);
+  };
+
+  const startTextToSpeech = (message) => {
+    if(!message.content.includes('https')) {
+      Tts.speak(message.content, {
+        iosVoiceId: "com.apple.ttsbundle.Moira-compact",
+        rate: 0.5,
+      });
+    }
+  }
+
+  const stopSpeaking = () => {
+    Tts.stop();
+    setRecording(false);
+  }
+
+  const clear = () => {
+    setMsg([]);
+    Tts.stop();
+  }
+
+  useEffect(() => {
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechEnd = onSpeechEnd;
+    Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechResults = onSpeechResults;
+
+    // tts handler
+
+    Tts.addEventListener("tts-start", (event) => console.log("start", event));
+    Tts.addEventListener("tts-finish", (event) => console.log("finish", event));
+    Tts.addEventListener("tts-cancel", (event) => console.log("cancel", event));
+    Tts.addEventListener("tts-progress", (event) => console.log("progress", event));
+
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
   return (
     <View className="flex-1 bg-white">
       <SafeAreaView className="flex-1 flex mx-5">
@@ -41,6 +153,7 @@ export default function HomeScreen() {
               className="bg-neutral-200 rounded-3xl p-4"
             >
               <ScrollView
+                ref={ScrollViewRef}
                 bounces={false}
                 className="space-y-4"
                 showsVerticalScrollIndicator={false}
@@ -86,8 +199,13 @@ export default function HomeScreen() {
         )}
 
         <View className="flex justify-center items-center">
-          {recording ? (
-            <TouchableOpacity>
+          {loading ? (
+            <Image
+              source={require("./../../assets/images/loading.gif")}
+              style={{ width: wp(40), height: hp(10) }}
+            />
+          ) : recording ? (
+            <TouchableOpacity onPress={stopRecording}>
               <Image
                 className="rounded-full"
                 source={require("./../../assets/images/voiceLoading.gif")}
@@ -96,7 +214,7 @@ export default function HomeScreen() {
               />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={startRecording}>
               <Image
                 className="rounded-full"
                 source={require("./../../assets/images/recordingIcon.png")}
@@ -109,7 +227,7 @@ export default function HomeScreen() {
 
         {msg.length > 0 && (
           <TouchableOpacity
-            onPress={() => setMsg([])}
+            onPress={clear}
             className="bg-neutral-400 rounded-3xl p-2 absolute right-10 bottom-16"
           >
             <Text className="text-white font-semibold">Clear</Text>
@@ -118,7 +236,7 @@ export default function HomeScreen() {
 
         {msg.length > 0 && (
           <TouchableOpacity
-            onPress={() => setRecording(false)}
+            onPress={stopSpeaking}
             className="bg-red-400 rounded-3xl p-2 absolute left-10 bottom-16"
           >
             <Text className="text-white font-semibold">Stop</Text>
