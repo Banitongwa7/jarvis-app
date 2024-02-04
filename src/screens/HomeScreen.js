@@ -1,4 +1,11 @@
-import { View, Text, Image, SafeAreaView, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
 import Features from "../components/Features";
 import { dummyMessages } from "../utils";
@@ -9,6 +16,7 @@ import {
 
 export default function HomeScreen() {
   const [msg, setMsg] = useState(dummyMessages);
+  const [recording, setRecording] = useState(false);
   return (
     <View className="flex-1 bg-white">
       <SafeAreaView className="flex-1 flex mx-5">
@@ -75,6 +83,44 @@ export default function HomeScreen() {
           </View>
         ) : (
           <Features />
+        )}
+
+        <View className="flex justify-center items-center">
+          {recording ? (
+            <TouchableOpacity>
+              <Image
+                className="rounded-full"
+                source={require("./../../assets/images/voiceLoading.gif")}
+                style={{ width: wp(10), height: hp(10) }}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity>
+              <Image
+                className="rounded-full"
+                source={require("./../../assets/images/recordingIcon.png")}
+                style={{ width: wp(10), height: hp(10) }}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {msg.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setMsg([])}
+            className="bg-neutral-400 rounded-3xl p-2 absolute right-10"
+          >
+            <Text className="text-white font-semibold">Clear</Text>
+          </TouchableOpacity>
+        )}
+
+        {msg.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setRecording(false)}
+            className="bg-red-400 rounded-3xl p-2 absolute left-10"
+          >
+            <Text className="text-white font-semibold">Stop</Text>
+          </TouchableOpacity>
         )}
       </SafeAreaView>
     </View>
