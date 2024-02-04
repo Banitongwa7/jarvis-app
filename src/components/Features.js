@@ -18,7 +18,8 @@ export default function Features() {
         <View className="flex-row space-x-1 items-center">
           <Image
             source={require("./../../assets/images/chatgptIcon.png")}
-            style={{ width: wp(4), height: hp(4) }}
+            style={{ width: wp(10), height: hp(4) }}
+            resizeMode="contain"
           />
           <Text
             style={{ fontSize: wp(4.8) }}
@@ -40,7 +41,8 @@ export default function Features() {
         <View className="flex-row space-x-1 items-center">
           <Image
             source={require("./../../assets/images/dalleIcon.png")}
-            style={{ width: wp(4), height: hp(4) }}
+            style={{ width: wp(10), height: hp(4) }}
+            resizeMode="contain"
           />
           <Text
             style={{ fontSize: wp(4.8) }}
@@ -62,7 +64,8 @@ export default function Features() {
         <View className="flex-row space-x-1 items-center">
           <Image
             source={require("./../../assets/images/smartaiIcon.png")}
-            style={{ width: wp(4), height: hp(4) }}
+            style={{ width: wp(10), height: hp(4) }}
+            resizeMode="contain"
           />
           <Text
             style={{ fontSize: wp(4.8) }}

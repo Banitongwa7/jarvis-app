@@ -16,14 +16,14 @@ import {
 
 export default function HomeScreen() {
   const [msg, setMsg] = useState(dummyMessages);
-  const [recording, setRecording] = useState(false);
+  const [recording, setRecording] = useState(true);
   return (
     <View className="flex-1 bg-white">
       <SafeAreaView className="flex-1 flex mx-5">
         <View className="flex-row justify-center">
           <Image
             source={require("./../../assets/images/bot.png")}
-            style={{ width: wp(15), height: hp(15) }}
+            style={{ width: wp(25), height: hp(15) }}
             resizeMode="contain"
           />
         </View>
@@ -91,7 +91,8 @@ export default function HomeScreen() {
               <Image
                 className="rounded-full"
                 source={require("./../../assets/images/voiceLoading.gif")}
-                style={{ width: wp(10), height: hp(10) }}
+                style={{ width: wp(40), height: hp(10) }}
+                resizeMode="contain"
               />
             </TouchableOpacity>
           ) : (
@@ -99,7 +100,8 @@ export default function HomeScreen() {
               <Image
                 className="rounded-full"
                 source={require("./../../assets/images/recordingIcon.png")}
-                style={{ width: wp(10), height: hp(10) }}
+                style={{ width: wp(40), height: hp(10) }}
+                resizeMode="contain"
               />
             </TouchableOpacity>
           )}
@@ -108,7 +110,7 @@ export default function HomeScreen() {
         {msg.length > 0 && (
           <TouchableOpacity
             onPress={() => setMsg([])}
-            className="bg-neutral-400 rounded-3xl p-2 absolute right-10"
+            className="bg-neutral-400 rounded-3xl p-2 absolute right-10 bottom-16"
           >
             <Text className="text-white font-semibold">Clear</Text>
           </TouchableOpacity>
@@ -117,7 +119,7 @@ export default function HomeScreen() {
         {msg.length > 0 && (
           <TouchableOpacity
             onPress={() => setRecording(false)}
-            className="bg-red-400 rounded-3xl p-2 absolute left-10"
+            className="bg-red-400 rounded-3xl p-2 absolute left-10 bottom-16"
           >
             <Text className="text-white font-semibold">Stop</Text>
           </TouchableOpacity>

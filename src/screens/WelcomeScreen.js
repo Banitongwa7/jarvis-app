@@ -24,7 +24,7 @@ export default function WelcomeScreen() {
       <View className="flex-row justify-center">
         <Image
           source={require("./../../assets/images/welcome.png")}
-          style={{ width: wp(75), height: hp(75) }}
+          style={{ width: wp(75), height: hp(45) }}
           resizeMode="contain"
         />
       </View>
